@@ -21,13 +21,13 @@ variable "key_name" {
   default = "AmzLinuxKey2"
 }
 
-data "aws_availability_zones" "simple_avail_zones" {
-  # state = "available"
-  all_availability_zones = true
+variable "avail_zones" {
+  description = "Availability zones"
+  default = ["eu-west-2a", "eu-west-2b"]
 }
 
 resource "aws_security_group" "web_security_group" {
-  name = "simple_server_sg"
+  name = "simple-server-sg"
   ingress {
     from_port= "${var.server_port}"
     to_port = "${var.server_port}"
@@ -40,6 +40,12 @@ resource "aws_security_group" "web_security_group" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   lifecycle {
     create_before_destroy = true
   }
@@ -49,8 +55,8 @@ resource "aws_security_group" "lb_security_group" {
   name = "loadbalancer_sg"
   ingress {
     from_port = 80
-    to_port = 89 
-    protocol = "tpc"
+    to_port = 80 
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
@@ -62,11 +68,12 @@ resource "aws_security_group" "lb_security_group" {
 }
 
 resource "aws_launch_configuration" "simple_launch_config" {
-  image_id           = "ami-04706e771f950937f"
+  name = "simple-launch-config"
+  image_id  = "ami-04706e771f950937f"
   instance_type = "t2.micro"
   security_groups = ["${aws_security_group.web_security_group.id}"]
   key_name =  "${var.key_name}"
-  user_data ="sudo amazon-linux-extras install nginx1 -y \n sudo service nginx start"
+  user_data = file("user-data.sh")
   lifecycle {
     create_before_destroy = true
   }
@@ -74,7 +81,7 @@ resource "aws_launch_configuration" "simple_launch_config" {
 
 resource "aws_elb" "simple_loadbalancer" {
   name = "app-load-balancer"  
-  availability_zones = data.aws_availability_zones.simple_avail_zones.names
+  availability_zones = var.avail_zones
   listener {
     lb_port = 80
     lb_protocol = "http"
@@ -87,13 +94,13 @@ resource "aws_elb" "simple_loadbalancer" {
     timeout = 3 
     interval = 30
     target = "HTTP:${var.server_port}/"
-    //path = "/"
   }
 }
 
 resource "aws_autoscaling_group" "simple_autoscaling_group" {
-  launch_configuration = "${aws_launch_configuration.simple_launch_config}" 
-  availability_zones = [data.aws_availability_zones.simple_avail_zones.names]
+  name = "simple-autoscaling-group"
+  launch_configuration = "${aws_launch_configuration.simple_launch_config.name}"
+  availability_zones = var.avail_zones
   min_size = 2
   max_size = 10
   load_balancers = ["${aws_elb.simple_loadbalancer.name}"]
@@ -106,5 +113,5 @@ resource "aws_autoscaling_group" "simple_autoscaling_group" {
 }
 
 output "elb_dns_name" {
-  value = "${aws_elb.simple_loadbalancer.dns_name}"
+  value = aws_elb.simple_loadbalancer.dns_name
 }
