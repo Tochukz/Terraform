@@ -21,11 +21,16 @@ variable "key_name" {
   default = "AmzLinuxKey2"
 }
 
+variable "amazon_linux2_ami" {
+  description = "Amazon linux2 AMI"
+  default = "ami-09dca206ba8b0b1cc"
+}
+
 resource "aws_security_group" "web_security_group" {
   name = "simple_server_sg"
   ingress {
-    from_port= "${var.server_port}"
-    to_port = "${var.server_port}"
+    from_port= var.server_port
+    to_port = var.server_port
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -35,19 +40,25 @@ resource "aws_security_group" "web_security_group" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_instance" "simple_server" {
-  ami           = "ami-04706e771f950937f"
+  ami = var.amazon_linux2_ami
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.web_security_group.id}"]
-  key_name =  "${var.key_name}"
+  key_name =  var.key_name
   tags = {
     Name = "ExampleAppServerInstance"
   }
-  user_data ="sudo amazon-linux-extras install nginx1 -y \n sudo service nginx start"
+  user_data = file("user-data.sh")
 }
 
 output "public_ip" {
-  value = "${aws_instance.simple_server.public_ip}"
+  value = aws_instance.simple_server.public_ip
 }
