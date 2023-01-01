@@ -114,3 +114,54 @@ $ terraform output public_ip
 ```
 
 [A Comprehensive Guide to Building a Scalable Web App on Amazon Web Services - Part 1](https://www.airpair.com/aws/posts/building-a-scalable-web-app-on-amazon-web-services-p1)
+
+## Chapter 3: How to manage Terraform state  
+__Backend Configuration__    
+Terraform uses persisted state data to keep track of the resources it manages.  
+A _backend_ defines where Terraform stores its state data files.  
+Most non-trivial Terraform configurations either integrate with _Terraform Cloud_ or use a backend to store state remotely.  
+By default, Terraform uses a backend called _local_, which stores state as a local file on disk.   
+
+When you change a backend's configuration, you must run _terraform init_ again to validate and configure the backend before you can perform any _plans_, _applies_, or state operations.
+
+__S3 Backend configuration__   
+To configure S3 for remote storage of state
+First create the S3 bucket and enable object versioning
+```
+$ aws s3 mb s3://xyz.tochukwu-terraform-states
+$ aws s3api put-bucket-versioning --bucket xyz.tochukwu-terraform-states --versioning-configuration Status=Enabled
+```
+AWS recommends that you wait for 15 minutes after enabling versioning before issuing write operations (PUT or DELETE) on objects in the bucket.  
+
+You may also enable server-side encryption on the S3 bucket
+```
+$ aws s3api put-bucket-encryption --bucket xyz.tochukwu-terraform-states --server-side-encryption-configuration file://s3-encryption-config.json
+```
+To enable state locking, you may create a dynamoDB
+```
+$ aws dynamodb create-table --table-name terraform_states_lock  --attribute-definitions AttributeName=LockID,AttributeType=S  --key-schema AttributeName=LockID,KeyType=HASH  --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+```
+Now add a backend block to your terraform template
+```
+terraform {
+  backend "s3" {
+    bucket = "xyz.tochukwu-terraform-states"
+    key = "my-solution/terraform-tfstate.json"
+    region = "eu-west-2"
+    dynamodb_table = "terraform_states_lock"
+  }
+}
+```
+At anytime you can download your `terraform.tfstate` file from the S3 bucket
+```
+$ aws s3api get-object --bucket xyz.tochukwu-terraform-states --key my-solution/terraform-tfstate.json results/terraform-tfstate.json
+```
+
+__State migration__  
+When you make changes to the _backend_ block that affects the state location, you need to run _terraform init_ with the _-migrate-state_ or _-reconfigure_ flag.
+````
+$ terraform init -migrate-state
+```
+
+[Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/configuration)   
+[S3 Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/s3)
