@@ -137,11 +137,15 @@ You may also enable server-side encryption on the S3 bucket
 ```
 $ aws s3api put-bucket-encryption --bucket xyz.tochukwu-terraform-states --server-side-encryption-configuration file://s3-encryption-config.json
 ```
-To enable state locking, you may create a dynamoDB
+
+__State lock__  
+To enable state locking, for your S3 backend, you may create a dynamoDB
 ```
 $ aws dynamodb create-table --table-name terraform_states_lock  --attribute-definitions AttributeName=LockID,AttributeType=S  --key-schema AttributeName=LockID,KeyType=HASH  --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
-```
-Now add a backend block to your terraform template
+```  
+
+__Backend block__  
+To use the S3 backend and dynamoDB for state lock for your backend, you add a backend block to your terraform template
 ```
 terraform {
   backend "s3" {
@@ -159,9 +163,10 @@ $ aws s3api get-object --bucket xyz.tochukwu-terraform-states --key my-solution/
 
 __State migration__  
 When you make changes to the _backend_ block that affects the state location, you need to run _terraform init_ with the _-migrate-state_ or _-reconfigure_ flag.
-````
-$ terraform init -migrate-state
 ```
+$ terraform init -migrate-state
+```  
 
+__Learn More__  
 [Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/configuration)   
 [S3 Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/s3)
