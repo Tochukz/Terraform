@@ -161,12 +161,30 @@ At anytime you can download your `terraform.tfstate` file from the S3 bucket
 $ aws s3api get-object --bucket xyz.tochukwu-terraform-states --key my-solution/terraform-tfstate.json results/terraform-tfstate.json
 ```
 
-__State migration__  
+__State migration__    
 When you make changes to the _backend_ block that affects the state location, you need to run _terraform init_ with the _-migrate-state_ or _-reconfigure_ flag.
 ```
 $ terraform init -migrate-state
 ```  
 
-__Learn More__  
+__Learn More__   
 [Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/configuration)   
 [S3 Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/s3)
+
+## Chapter 4: How to create reusable infrastructure with Terraform modules  
+__Modules Basics__  
+Whenever you add a module to your Terraform templates or modify its source parameter, you need to run the get command before you run plan or apply:  
+```
+$ terraform get
+$ terraform plan
+```  
+If you update your module you may need to call the `get` command with `-update` flag.  
+```
+$ terraform get -update
+```   
+
+__Inline blocks__  
+The configuration for some Terraform resources can be defined either as inline blocks or as separate resources. When creating a module, you should always prefer using a separate resource.   
+If you try to use a mix of both inline blocks and separate resources, you will get errors where routing rules conflict and overwrite each other. Therefore, you must use one or the other.
+
+## Chapter 5: Terraform tips & tricks: loops, if- statements, deployment, and gotchas
