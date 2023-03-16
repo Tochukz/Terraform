@@ -9,7 +9,7 @@ __By Yevgenic Brikman__
 ## Chapter 1: Why Terraform
 __The rise of DevOps__   
 Applying DevOPs practices can reduce _lead times_ significantly for an organization.  
-There are four code values in the DEvOps movement: Culture, Automation, Measurement and Sharing (sometimes abbreviated as the acronym CAMS).  
+There are four core values in the DevOps movement: _Culture_, _Automation_, _Measurement_ and _Sharing_ (sometimes abbreviated as the acronym CAMS).  
 
 __What is infrastructure as code__  
 There are four broad categories of IAC tools:
@@ -28,7 +28,7 @@ $ brew tap hashicorp/tap
 $ brew install hashicorp/tap/terraform
 $ terraform --version
 ```
-For other OS, see [Install Terraform](https://developer.hashicorp.com/terraform/downloads)  
+For other Operating Systems, see [Install Terraform](https://developer.hashicorp.com/terraform/downloads)  
 Terraform uses you configured AWS credential, so you do not need to do anything if you already have AWS CLI   configured.  
 
 You may also install the _autocomplete package_:   
@@ -36,7 +36,8 @@ You may also install the _autocomplete package_:
 $ terraform -install-autocomplete
 ```
 __Deploy a Single server__  
-Terraform code is written in the _HashiCorp Configuration Language_ (HCL) in files with the extension `.tf`.    
+Terraform code is written in the _HashiCorp Configuration Language_ (HCL) in files with the extension `.tf`.     
+
 [AWS Instance Types](https://aws.amazon.com/ec2/instance-types/)  
 
 After creating your terraform configuration file, or after cloning a terraform project from a repository, you navigate into the folder and run the `inti` command:  
@@ -56,7 +57,7 @@ To format and validate your configuration, run the `fmt` command:
 $ terraform fmt
 ```  
 
-To ensure that your configuration is syntactically valid and internally consistent run the `validate` command.  
+To ensure that your configuration is syntactically valid and internally consistent run the `validate` command:  
 ```
 $ terraform validate
 ```
@@ -80,7 +81,7 @@ $ terraform state list
 __Cidr block__  
 For a handy calculator that converts between IP address ranges and CIDR notation, see [ipaddressguide.com/cidr](https://www.ipaddressguide.com/cidr)
 
-__Input variable__
+__Input variable__  
 The syntax for defining variable is as follows   
 ```
 variable "variablename" {
@@ -89,7 +90,13 @@ variable "variablename" {
   default = ""
 }
 ```  
-The `type` may be _string_, _list_, or _map_.   
+The `type` may be
+1. string
+2. number
+3. bool
+4. list (or tuple)
+5. map (or object)
+
 The value for variable can be provided in a number of ways:
 * passing it in at the command line using the _-var_ option
 ```
@@ -98,8 +105,9 @@ $ terraform plan -var server_port=80
 * via a file using the _-var-file_ option
 * via an environment variable  of the name *TF_VAR_<variable_name>*  
 If no value is passed in, the variable will fall back to this default value. If there is no default value, Terraform will interactively prompt the user for one.  
-__Resource Dependency__
-Terraform to show you the dependency graph by running the graph command:
+
+__Resource Dependency__  
+Terraform shows you the dependency graph by running the graph command:
 ```
 $ terraform graph
 ```  
@@ -122,11 +130,11 @@ A _backend_ defines where Terraform stores its state data files.
 Most non-trivial Terraform configurations either integrate with _Terraform Cloud_ or use a backend to store state remotely.  
 By default, Terraform uses a backend called _local_, which stores state as a local file on disk.   
 
-When you change a backend's configuration, you must run _terraform init_ again to validate and configure the backend before you can perform any _plans_, _applies_, or state operations.
+When you change a backend's configuration, you must run `terraform init` again to validate and configure the backend before you can perform any _plans_, _applies_, or state operations.
 
 __S3 Backend configuration__   
-To configure S3 for remote storage of state
-First create the S3 bucket and enable object versioning
+To configure S3 for remote storage of state,
+first create the S3 bucket and enable object versioning
 ```
 $ aws s3 mb s3://xyz.tochukwu-terraform-states
 $ aws s3api put-bucket-versioning --bucket xyz.tochukwu-terraform-states --versioning-configuration Status=Enabled
@@ -162,7 +170,7 @@ $ aws s3api get-object --bucket xyz.tochukwu-terraform-states --key my-solution/
 ```
 
 __State migration__    
-When you make changes to the _backend_ block that affects the state location, you need to run _terraform init_ with the _-migrate-state_ or _-reconfigure_ flag.
+When you make changes to the _backend_ block that affects the state location, you need to run `terraform init` with the `-migrate-state` or `-reconfigure` flag.
 ```
 $ terraform init -migrate-state
 ```  
@@ -188,3 +196,36 @@ The configuration for some Terraform resources can be defined either as inline b
 If you try to use a mix of both inline blocks and separate resources, you will get errors where routing rules conflict and overwrite each other. Therefore, you must use one or the other.
 
 ## Chapter 5: Terraform tips & tricks: loops, if- statements, deployment, and gotchas
+Terraform provides a few primitives — namely, a meta-parameter called _count_, a lifecycle block called _create_before_destroy_, plus a large number of interpolation functions that allow you to do certain types of loops, if-statements, and zero-downtime deployments.  
+
+__Loop__  
+almost every Terraform resource has a meta-parameter you can use called _count_.  
+This parameter defines how many copies of the resource to create.  
+In terraform you can loop by using _count.index_ and two interpolation functions: _element_ and _length_.  
+
+```
+resource "aws_iam_user" "example" {
+  count = "${length(var.user_names)}"
+  name = "${element(var.user_names, count.index)}"
+}
+```
+User _user_names_ is an variable of type _list(string)_.
+
+To learn more about the [interpolation syntax](https://developer.hashicorp.com/terraform/language/v1.1.x/configuration-0-11/interpolation)
+
+An _IAM policy_ consists of one or more statements, each of which specifies an effect (either “Allow” or “Deny”), on one or more actions (e.g. “ec2:Describe*” allows all API calls to EC2 that start with the name “Describe”), on one or more resources (e.g. “*” means “all resources”).
+```
+{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["ec2:Describe*"],     
+      "Resource": ["*"]
+    }
+  ]
+}
+```  
+
+__Simple if-statements__   
+In Terraform, if you set a variable to a boolean _true_ it will be converted to a 1 and if you set it to a boolean _false_, it will be converted to a 0.  
+If you set _count_ to 1 on a resource, you get one copy of that resource and if you set _count_ to 0, that resource is not created at all.  
