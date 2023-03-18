@@ -1,6 +1,7 @@
 # Nginx Server  
 __Description__  
 This project provisions a docker container running NGINX server using Docker Desktop.  
+The provider used was _kreuzwerker/docker_ and with a local state. 
 
 __Deploy__  
 ```
