@@ -229,3 +229,5 @@ An _IAM policy_ consists of one or more statements, each of which specifies an e
 __Simple if-statements__   
 In Terraform, if you set a variable to a boolean _true_ it will be converted to a 1 and if you set it to a boolean _false_, it will be converted to a 0.  
 If you set _count_ to 1 on a resource, you get one copy of that resource and if you set _count_ to 0, that resource is not created at all.  
+
+__More complicated if-statements__   
