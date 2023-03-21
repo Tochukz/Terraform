@@ -1,0 +1,6 @@
+.vscode
+.terraform
+results/
+.env
+.terraform.lock.hcl 
+keys
