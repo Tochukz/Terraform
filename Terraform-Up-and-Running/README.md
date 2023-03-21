@@ -1,10 +1,12 @@
 # Terraform Up and Running (2017)
 __By Yevgenic Brikman__   
-[Github Code Examples](https://github.com/brikis98/terraform-up-and-running-code)
-[Terraform Docs](https://developer.hashicorp.com/terraform/docs)  
-[Terraform Providers](https://registry.terraform.io/browse/providers)  
-[AWS Providers](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)  
+[Github Code Examples](https://github.com/brikis98/terraform-up-and-running-code)      
+[Terraform Docs](https://developer.hashicorp.com/terraform/docs)   
+[Terraform Providers](https://registry.terraform.io/browse/providers)    
+[AWS Providers](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)   
 [Azure Providers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)   
+[Terraform Language Documentation](https://developer.hashicorp.com/terraform/language)    
+[Terraform Tutorials](https://developer.hashicorp.com/terraform/tutorials/configuration-language)     
 
 ## Chapter 1: Why Terraform
 __The rise of DevOps__   
@@ -195,6 +197,37 @@ __Inline blocks__
 The configuration for some Terraform resources can be defined either as inline blocks or as separate resources. When creating a module, you should always prefer using a separate resource.   
 If you try to use a mix of both inline blocks and separate resources, you will get errors where routing rules conflict and overwrite each other. Therefore, you must use one or the other.
 
+### Managing multiple environments with Terraform using workspaces
+To deploy a configuration in three environments: _dev_, _staging_, _prod_ you can use workspaces.   
+ First create a workspace called dev using the `terraform workspace new` command:
+```
+$ terraform workspace new dev
+```
+Workspaces isolate their state, so if you run `terraform plan` Terraform will not see any existing state for this configuration.
+
+And now you can deploy the server in dev using `terraform apply`:
+```
+$ terraform apply
+```  
+To deploy to _staging_, you create a new workspace called stage:
+```
+$ terraform workspace new staging
+```
+And the you run `terraform apply` again.  
+To deploy to _prod_, repeat the same as you did for _staging_.  
+
+__Switching between environment__  
+To switch between environments, you need to switch between workspaces
+```
+$ terraform workspace list
+$ terraform workspace select dev
+```   
+__NB:__ Unfortunately, Terraform workspaces only support using a single backend for all your workspaces.  
+This is one of the reasons that even HashiCorp’s own documentation does not recommend using Terraform workspaces alone for managing environments.   
+Perhaps a combination of workspace and resuable modules will do the trick.  
+
+Learn more about [Using workspaces](https://blog.gruntwork.io/how-to-manage-multiple-environments-with-terraform-using-workspaces-98680d89a03e)  
+
 ## Chapter 5: Terraform tips & tricks: loops, if- statements, deployment, and gotchas
 Terraform provides a few primitives — namely, a meta-parameter called _count_, a lifecycle block called _create_before_destroy_, plus a large number of interpolation functions that allow you to do certain types of loops, if-statements, and zero-downtime deployments.  
 
@@ -231,3 +264,7 @@ In Terraform, if you set a variable to a boolean _true_ it will be converted to 
 If you set _count_ to 1 on a resource, you get one copy of that resource and if you set _count_ to 0, that resource is not created at all.  
 
 __More complicated if-statements__   
+
+
+__Resources__  
+[Terraform AWS VPC](https://nickcharlton.net/posts/terraform-aws-vpc)  

@@ -32,6 +32,15 @@ This will generate a public and private key named `dev` in the _keys_ directory.
 You may do the same and replace the -f parameter value by `keys/staging` to generate keys for staging environment and similarly, `keys/prod` for production environment.  
 The _keys_ directory has been added to .gitignore to prevent accidental commiting to remote repository.  
 
+__Get ACM certificate__  
+Get existing Amazon Certificate for the CloudFront sitribution. 
+```
+$ aws acm list-certificates --region us-east-1
+```
+Copy the certificarte ARN which will be used as a module parameter.   
+If you don't have an existing certificate, request for one using `aws acm` command. 
+__NB:__ The ACM certificate must be in _us-east-1_ region.
+
 __Initialization__  
 After cloning the project for the first time, run `terraform init` command for each root module.  
 For example, the development network root module
@@ -95,7 +104,7 @@ __Retrieve the private key from secrets manager__
 If someone else deployed the infrastrcture and save the private key to AWS secrets manager, you can access the key by downloading it.  
 ```
 $ aws secretsmanager get-secret-value --secret-id Plus1ConfDevKey --query SecretString --output text | base64 --decode > ~/Plus1ConfDevKey.pem
-$ chmod 400 Plus1ConfDevKey.pem
+$ chmod 400 ~/Plus1ConfDevKey.pem
 ```
 
 __SSH into the EC2 instance__  
