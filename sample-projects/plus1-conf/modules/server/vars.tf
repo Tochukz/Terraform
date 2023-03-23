@@ -12,5 +12,5 @@ variable "instance_type" {
   description = "The ec2 instance type"
 }
 variable "network_state_key" {
-  description = "The object key for the state which is stored in S3 bucket"
+  description = "The object key for the state which is stored in S3 bucket for the network module"
 }

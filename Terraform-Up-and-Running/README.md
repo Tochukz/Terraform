@@ -267,4 +267,7 @@ __More complicated if-statements__
 
 
 __Resources__  
+![](prod-checklist.webp)
+
 [Terraform AWS VPC](https://nickcharlton.net/posts/terraform-aws-vpc)  
+[5 Lessons Learned of IAC](https://blog.gruntwork.io/5-lessons-learned-from-writing-over-300-000-lines-of-infrastructure-code-36ba7fadeac1)   

@@ -12,25 +12,37 @@ resource "aws_internet_gateway" "custom_getway" {
 
 resource "aws_subnet" "public_subnet" {
   vpc_id = aws_vpc.custom_vpc.id 
-  cidr_block = "10.0.0.0/24"
+   cidr_block = "10.0.0.0/17"
   map_public_ip_on_launch = true
+  availability_zone = "${var.region}a"
   tags = {
     Name = "Plus1Conf-${var.env_name}-PublicSubnet"
   }
 }
 
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "private_subnet1" {
   vpc_id = aws_vpc.custom_vpc.id 
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "10.0.128.0/18"
   map_public_ip_on_launch = false
+   availability_zone = "${var.region}b"
   tags = {
-    Name = "Plus1Conf-${var.env_name}-PrivateSubnet"
+    Name = "Plus1Conf-${var.env_name}-PrivateSubnet1"
+  }
+}
+
+resource "aws_subnet" "private_subnet2" {
+  vpc_id = aws_vpc.custom_vpc.id
+  cidr_block = "10.0.192.0/18"
+  map_public_ip_on_launch = false
+   availability_zone = "${var.region}c"
+  tags = {
+    Name = "Plus1Conf-${var.env_name}-PrivateSubnet2"
   }
 }
 
 resource "aws_security_group" "web_security_group" {
   vpc_id = aws_vpc.custom_vpc.id
-  name = "Plus1Conf-${var.env_name}-SG"
+  name = "Plus1Conf-${var.env_name}-Web-SG"
   description = "Allows incoming HTTP/HTTPS, SSH access and all outgoing requests"
   ingress {
     from_port = 80
@@ -65,6 +77,20 @@ resource "aws_security_group" "web_security_group" {
   }
 }
 
+resource "aws_security_group" "db_security_group" {
+  vpc_id = aws_vpc.custom_vpc.id
+  name = "Plus1Conf-${var.env_name}-Db-SG"
+  description = "Allows incoming request on port 5432"
+
+  ingress {
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+    description = "Allow access to requests from public subnet at port 5432"
+  }
+}
+
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.custom_vpc.id
   route {
@@ -77,12 +103,12 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table_association" "subnet_public_table_assoc" {
-  subnet_id = aws_subnet.public_subnet.id 
+  subnet_id = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_network_interface" "custom_network_interface" {
-  subnet_id = aws_subnet.private_subnet.id
+  subnet_id = aws_subnet.private_subnet1.id
   security_groups = [ aws_security_group.web_security_group.id ]
 }
 
@@ -98,6 +124,6 @@ resource "aws_route_table" "private_route_table" {
 }
 
 resource "aws_route_table_association" "subnet_private_table_assoc" {
-  subnet_id = aws_subnet.private_subnet.id
+  subnet_id = aws_subnet.private_subnet1.id
   route_table_id = aws_route_table.private_route_table.id
 }
