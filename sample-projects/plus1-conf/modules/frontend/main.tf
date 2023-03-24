@@ -1,3 +1,17 @@
+data "aws_iam_policy_document" "bucket_policy_doc" {
+  statement {
+    principals {
+      type = "Service"
+      identifiers = ["cloudfront.amazonaws.com"] 
+    }
+    actions = ["s3:GetObject"]
+    resources = [ 
+      aws_s3_bucket.origin_bucket.arn,
+      "${aws_s3_bucket.origin_bucket.arn}/*",
+    ]
+  }
+}
+
 locals {
   s3_origin_id = "Plus1Conf${var.env_name}S3Origin"
 }
@@ -15,15 +29,28 @@ resource "aws_s3_bucket_acl" "bucket_access_control" {
   acl    = "private"
 }
 
+resource "aws_s3_bucket_policy" "site_bucket_policy" {
+  bucket = aws_s3_bucket.origin_bucket.id
+  policy = data.aws_iam_policy_document.bucket_policy_doc.json
+}
+
+resource "aws_cloudfront_origin_access_control" "origin_access"{
+  name = "plus1-conf-${var.env_name}-origin-access"
+  description = "S3 origin access for cloudfront distribution"
+  origin_access_control_origin_type = "s3"
+  signing_behavior = "always"
+  signing_protocol = "sigv4"
+}
 
 resource  "aws_cloudfront_distribution" "site_dist" {  
   default_root_object = "index.html"
   enabled = true
   aliases = var.alternate_domains
+
   origin {
     domain_name = aws_s3_bucket.origin_bucket.bucket_regional_domain_name
     origin_id = local.s3_origin_id
-    # origin_access_control_id = aws_cloudfront_origin_access_control.default.id
+    origin_access_control_id = aws_cloudfront_origin_access_control.origin_access.id
   }
   custom_error_response {
     error_code = 403
