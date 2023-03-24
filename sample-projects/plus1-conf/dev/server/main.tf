@@ -15,6 +15,6 @@ module "server" {
   env_name = "dev"
   region = var.region
   instance_type = "t2.nano"
-  allocation_id = "eipalloc-013e635330db3701c"
+  allocation_id = "eipalloc-0d0b2b1373a7819db"
   network_state_key = "plus1-conf/dev/network/terraform.tfstate.json"
 }

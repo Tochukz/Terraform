@@ -16,6 +16,7 @@ output "web_sg_id" {
 output "db_sg_id" {
   value = aws_security_group.db_security_group.id
 }
-output "network_attach_id" {
+output "network_interface_id" {
   value = aws_network_interface.custom_network_interface.id
 }
+

@@ -12,7 +12,7 @@ resource "aws_internet_gateway" "custom_getway" {
 
 resource "aws_subnet" "public_subnet" {
   vpc_id = aws_vpc.custom_vpc.id 
-   cidr_block = "10.0.0.0/17"
+  cidr_block = "10.0.0.0/17"
   map_public_ip_on_launch = true
   availability_zone = "${var.region}a"
   tags = {
@@ -24,7 +24,7 @@ resource "aws_subnet" "private_subnet1" {
   vpc_id = aws_vpc.custom_vpc.id 
   cidr_block = "10.0.128.0/18"
   map_public_ip_on_launch = false
-   availability_zone = "${var.region}b"
+  availability_zone = "${var.region}a"
   tags = {
     Name = "Plus1Conf-${var.env_name}-PrivateSubnet1"
   }
@@ -34,7 +34,7 @@ resource "aws_subnet" "private_subnet2" {
   vpc_id = aws_vpc.custom_vpc.id
   cidr_block = "10.0.192.0/18"
   map_public_ip_on_launch = false
-   availability_zone = "${var.region}c"
+   availability_zone = "${var.region}b"
   tags = {
     Name = "Plus1Conf-${var.env_name}-PrivateSubnet2"
   }

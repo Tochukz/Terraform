@@ -16,6 +16,6 @@ output "web_sg_id" {
 output "db_sg_id" {
   value = module.network.db_sg_id
 }
-output "network_attach_id" {
-  value = module.network.network_attach_id
+output "network_interface_id" {
+  value = module.network.network_interface_id
 }

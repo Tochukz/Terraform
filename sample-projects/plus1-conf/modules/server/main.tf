@@ -37,19 +37,12 @@ resource "aws_instance" "server_instance" {
 }
 
 resource "aws_network_interface_attachment" "web_network_attach" {
-  network_interface_id = data.terraform_remote_state.network.outputs.network_attach_id
+  network_interface_id = data.terraform_remote_state.network.outputs.network_interface_id
   instance_id = aws_instance.server_instance.id
   device_index = 1
 }
 
 resource "aws_eip_association" "instance_eip_assoc" {
   allocation_id = var.allocation_id
-  instance_id = aws_instance.server_instance.id
+  network_interface_id = data.terraform_remote_state.network.outputs.network_interface_id
 }
-
-resource "aws_eip" "ip_address" {
-  instance = aws_instance.server_instance.id
-  vpc = true
-}
-
-
