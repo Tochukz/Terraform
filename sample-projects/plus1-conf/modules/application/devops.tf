@@ -3,7 +3,10 @@ data "aws_iam_policy_document" "assumed_role" {
     effect = "Allow" 
     principals {
       type = "Service"
-      identifiers = ["codedeploy.amazonaws.com"]
+      identifiers = [
+        "codedeploy.${var.region}.amazonaws.com",
+        "ec2.amazonaws.com"
+      ]
     }
     actions = ["sts:AssumeRole"]
   }
@@ -14,15 +17,6 @@ locals {
     "plus1conf-${var.env_name}-API1-DpGp", 
     "plus1conf-${var.env_name}-API2-DpGp"
   ]
-}
-
-resource "aws_cognito_user_pool" "cognito_userpool" {
-  name = "plus1conf-${var.env_name}-userpool"
-}
-
-resource "aws_cognito_user_pool_client" "cognito_client" {
-  name = "plus1conf-${var.env_name}-userpool-client"
-  user_pool_id = aws_cognito_user_pool.cognito_userpool.id
 }
 
 resource "aws_codedeploy_app" "codedeploy_app" {

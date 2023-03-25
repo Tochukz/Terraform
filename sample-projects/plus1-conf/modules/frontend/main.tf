@@ -1,12 +1,12 @@
 data "aws_iam_policy_document" "bucket_policy_doc" {
   statement {
+    effect = "Allow"
     principals {
       type = "Service"
       identifiers = ["cloudfront.amazonaws.com"] 
     }
     actions = ["s3:GetObject"]
     resources = [ 
-      aws_s3_bucket.origin_bucket.arn,
       "${aws_s3_bucket.origin_bucket.arn}/*",
     ]
   }

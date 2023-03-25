@@ -4,9 +4,9 @@ output "cognito_userpool_id" {
 output "cognito_client_id" {
   value = module.application.cognito_client_id
 }
-output "codedeploy_app_id" {
-  value = module.application.codedeploy_app_id
+output "codedeploy_app_name" {
+  value = module.application.codedeploy_app_name
 }
-output "deployment_group_ids" {
-  value = module.application.deployment_group_ids
+output "deployment_group_names" {
+  value = module.application.deployment_group_names
 }
