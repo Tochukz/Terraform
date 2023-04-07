@@ -15,5 +15,5 @@ module "frontend" {
   env_name = var.env_name 
   region = var.region
   certificate_arn = "arn:aws:acm:us-east-1:966727776968:certificate/a6a0318e-0898-4e7c-ab4b-a6f0b3de4436"
-  alternate_domains = ["dev.tochukwu.click", "dev-termial.tochukwu.click"]
+  alternate_domains = ["app-dev.tochukwu.click", "dev-termial.tochukwu.click"]
 }
