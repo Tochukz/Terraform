@@ -1,10 +1,17 @@
 # Lambda Configuration for serverless application
+The solution supports
+1. Native Node.js application and a
+2. Nest.js application  
+
+as two independent root modules.
+
+## Native Node.js application
 
 **Zip the source code build**
 
 ```
-$ cd example-app
-$ zip  ../main.zip main.js
+$ cd node-app
+$ zip main.zip main.js
 ```
 
 In a real build and deploy scenario we would have an S3 bucket set aside for staging our archive and would use this to "hand off" these artifacts between the build and deploy process.
@@ -20,7 +27,7 @@ The version number is included in the object path.
 **Trigger the Lambda function using AWS CLI**
 
 ```
-$ aws lambda invoke --function-name lambda-func-app output.json
+$ aws lambda invoke --function-name NativeNode_LambdaFuncApp output.json
 ```
 
 **To deploy a new version of the application**
@@ -44,7 +51,7 @@ $ terraform apply -var="app_version=1.0.1"
 Alternatively you can use a variable file
 
 ```
-$ terraform apply --var-file lambda.tfvars
+$ terraform apply --var-file input.tfvars
 ```
 
 4. Roll back to previous version
