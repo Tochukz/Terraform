@@ -1,3 +1,4 @@
+# Lambda Configuration for serverless application
 __Zip the source code build__  
 ```
 $ cd example-app
@@ -30,8 +31,12 @@ Deploy the new version using the app_version variable
 $ terraform apply -var="app_version=1.0.1"
 ``` 
 Alternatively you can use a variable file 
-````
+```
 $ terraform apply --var-file lambda.tfvars
+```  
+4. Roll back to previous version 
+```
+$ terraform apply -var="app_version=1.0.0"
 ```
 
 __Learn more__  
