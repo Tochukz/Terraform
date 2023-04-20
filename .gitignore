@@ -2,4 +2,5 @@
 .terraform
 results/
 .env
-.terraform.lock.hcl 
+.terraform.lock.hcl
+.DS_Store
