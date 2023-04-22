@@ -63,7 +63,7 @@ $ terraform apply -var="app_version=1.0.0"
 
 ## Nest.js application
 For the Nest.js application, the `serverless-express` npm module has been installed  i.e `@vendia/serverless-express`.   
-The `lambda.ts` file can be found in the `src` folder. It wraps the express application and exposes it as a lambda handler function.    
+Also, the `lambda.ts` file can be found in the `src` folder. It wraps the express application and exposes it as a lambda handler function.    
 
 __Build and package the application__  
 ```
@@ -75,7 +75,7 @@ $ zip -r dist.zip dist
 $ rm -r dist/node_modules
 $ rm dist/package.json
 ```  
-Or run the _package_ bash script which contains similar code the the one above. 
+Or run the _package_ bash script which contains similar code the the one above.
 ```
 $ cd nest-app
 $ ./package.sh
