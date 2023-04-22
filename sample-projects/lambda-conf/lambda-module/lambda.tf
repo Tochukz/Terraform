@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
 
 resource "aws_lambda_function" "simple" {
   function_name = "${var.app_name}_LambdaFuncApp"
-
+  timeout       = 10
   #   filename =  "main.zip"
   #   source_code_hash = filebase64sha256("main.zip")
   s3_bucket = "tochukwu1-bucket"
