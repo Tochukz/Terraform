@@ -272,3 +272,19 @@ __Resources__
 [Terraform AWS VPC](https://nickcharlton.net/posts/terraform-aws-vpc)  
 [5 Lessons Learned of IAC](https://blog.gruntwork.io/5-lessons-learned-from-writing-over-300-000-lines-of-infrastructure-code-36ba7fadeac1)    
 [Best practices](https://www.terraform-best-practices.com/)   
+
+## Learn more
+### TFLint
+TFLint is a Terraform linter that helps identify potential issues and best practices in Terraform code.  
+TFLint analyzes your HCL configuration files and provide warnings or errors for potential issues.  
+
+__Install TFLint__
+To install tflint on MacOS:  
+```
+$ brew install tflint
+```
+__Run tflint__  
+Run _tflint_ against your configuration files, just run _tflint_ in the directory where the configuration files lives.
+```
+$ tflint 
+```
