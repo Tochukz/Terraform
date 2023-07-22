@@ -292,7 +292,7 @@ $ tflint
 ### Security and compliance check with TFSec
 TFSec uses static analysis of your terraform code to spot potential misconfigurations.   
 
-__Install TFSec__
+__Install TFSec__  
 To install _tfsec_ on MacOS
 ```
 $ brew install tfsec
@@ -302,20 +302,121 @@ To install _tsfec_ on Windows, use _Chocolatey
 > choco install tfsec
 ```
 
-__Run TFSec__
-To scan you configuration files using _tfsec
+__Run TFSec__  
+To scan you configuration files using _tfsec_.
 ```
-$ cd my-project
+$ cd sample-cloud
 $ tfsec
 ```
+The exit status will be non-zero if tfsec finds problems, otherwise the exit status will be zero.  
+
+You can have the result output in various format (json, html markdown etc)  and you can save the result to a file
+```
+$ tfsec --out tfsec-result.json --format json
+```
+You can also have multiple format separated by comma.
+
+__TFSec Plugin__  
+Install the _tfsec_ VsCode  plugin.   
+The plugin is also available on _JetBrainS_ IDE and _Vim_.
+
+With the _tfsec_ plugin you can run the analysis on your code right inside the editor or IDE. The result will show all the compliance violation grouped into four categories: _Critical_ , _High_, _Medium_ and _Low_.
+
+[tfsec for  VSCode](https://marketplace.visualstudio.com/items?itemName=tfsec.tfsec)
+
+__Terraform CDK__  
+TFSec is compatible with the Terraform CDK.  
 [TFSec Github](https://github.com/aquasecurity/tfsec)
 
-#### Other Security and Compliance tool
-__Checkov__  
+__Ignoring Warnings__  
+To ignore a warning, you can simply add a comment containing `tfsec:ignore:<rule>` to the offending line in your templates.   Alternatively, you can add the comment to the line above the block containing the issue, or to the module block to ignore all occurrences of an issue inside the module.
+```bash
+resource "aws_security_group_rule" "my-rule" {
+    type = "ingress"
+    cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:aws-vpc-no-public-ingress-sgr
+}
+
+resource "aws_security_group_rule" "my-rule" {
+    type = "ingress"
+    #tfsec:ignore:aws-vpc-no-public-ingress-sgr
+    cidr_blocks = ["0.0.0.0/0"]
+}
+```
+You can set expiration date for ignore with `yyyy-mm-dd` format.
+```bash
+#tfsec:ignore:aws-s3-enable-bucket-encryption:exp:2025-01-02
+```
+
+### Other Security and Compliance tool
+#### Checkov
 Checkov scans cloud infrastructure configurations to find misconfiguration before they are deployed.
-Checkov analyze infrastructure as code (IaC) scan result across platforms such as Terraform, CloudFormation, Kubernetes Helm, ARM Templates and Serverless framework.  
+Checkov analyze infrastructure as code (IaC) scan result across platforms such as
+* Terraform
+* Terraform plan
+* CloudFormation
+* Kubernetes
+* ARM Templates
+* Serverless Framework
+* Helm
+* AWS CDK
 
 __Install checkov__  
 ```
 $ pip install checkov
 ```
+
+__Run checkov__  
+To scan your IaC project using checkov, you indicate the folder containing the code using the `-d` flag.
+```
+$ checkov -d sample-cloud
+```
+You can specify an output format and save the output to a file
+```
+$  checkov  -d plus1-conf --output json --output-file-path scan-results
+```
+Other useful flag are as follows:
+* `--hard-fail-on`
+* `--summary-position` which can be `top` or `bottom`
+* `--skip-resources-without-violations`
+
+__Scanning AWS CDK code__  
+Checkov supports the evaluation of policies on your CDK files by synthesizing a Cloudformation template out of the CDK code.
+
+```
+$ cdk synth
+$ checkov -f cdk.out/AppStack.template.json
+```
+
+[Checkov](https://www.checkov.io/)   
+[Checkov Github](https://github.com/bridgecrewio/checkov/)   
+
+#### Terrascan
+Terrascan is cross platform and supports
+* Terraform
+* CloudFormation
+* Kubernetes
+* Azure Resource Manager (ARM)  
+
+__Install terrascan__  
+```
+$ brew install terrascan
+```  
+
+__Run terrascan__  
+```
+$ cd sample-cloud
+$ terrascan scan
+```
+[Terrascan](https://runterrascan.io/)   
+[Terrascan Github](https://github.com/tenable/terrascan)   
+
+#### Kics
+Kics is cross platform and supports
+* Terraform
+* Docker
+* CloudFormation
+* AWS CDK
+* Pulumi
+* Kubernetes
+
+[Kics Github](https://github.com/Checkmarx/kics)
