@@ -274,17 +274,48 @@ __Resources__
 [Best practices](https://www.terraform-best-practices.com/)   
 
 ## Learn more
-### TFLint
+### Linting with TFLint
 TFLint is a Terraform linter that helps identify potential issues and best practices in Terraform code.  
 TFLint analyzes your HCL configuration files and provide warnings or errors for potential issues.  
 
 __Install TFLint__
-To install tflint on MacOS:  
+To install _tflint_ on MacOS:  
 ```
 $ brew install tflint
 ```
 __Run tflint__  
 Run _tflint_ against your configuration files, just run _tflint_ in the directory where the configuration files lives.
 ```
-$ tflint 
+$ tflint
+```
+
+### Security and compliance check with TFSec
+TFSec uses static analysis of your terraform code to spot potential misconfigurations.   
+
+__Install TFSec__
+To install _tfsec_ on MacOS
+```
+$ brew install tfsec
+```
+To install _tsfec_ on Windows, use _Chocolatey
+```
+> choco install tfsec
+```
+
+__Run TFSec__
+To scan you configuration files using _tfsec
+```
+$ cd my-project
+$ tfsec
+```
+[TFSec Github](https://github.com/aquasecurity/tfsec)
+
+#### Other Security and Compliance tool
+__Checkov__  
+Checkov scans cloud infrastructure configurations to find misconfiguration before they are deployed.
+Checkov analyze infrastructure as code (IaC) scan result across platforms such as Terraform, CloudFormation, Kubernetes Helm, ARM Templates and Serverless framework.  
+
+__Install checkov__  
+```
+$ pip install checkov
 ```
