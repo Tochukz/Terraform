@@ -1,17 +1,17 @@
 # Plus1 Conf
 ### Description
 This project provision AWS resources for a non-trivial web application.  
-The major resources provision includes 
+The major resources provision includes
 * VPC
-* EC2 instance 
-* RDS instance 
+* EC2 instance
+* RDS instance
 * Cloudfront distribution
-* Cognito Userpool and client 
+* Cognito Userpool and client
 * CodeDeploy App and deployment groups
 * SQS Queue
 * SNS Topics
 
-### Setup and pre-deployment 
+### Setup and pre-deployment
 The sections that follows describes the steps that are required before the deployment of the resources.    
 
 __Allocate an elastic IP__  
@@ -22,10 +22,10 @@ The _allocation_id_ obtained from the result will be used for the _allocation_id
 Elasic IPs are used for the EC2 elastic IP attachment.   
 
 __Generate SSH keys__    
-If you are the first person to deploy the infrastrcture, you will need to generate SSH keypairs, otherwise you must download it as described under _Keep the private keys..._ section.   
+If you are the first person to deploy the infrastructure, you will need to generate SSH keypairs, otherwise you must download it as described under _Keep the private keys..._ section.   
 To generate SSH keypair, run the command in the project root directory.  
 ```
-$ mkdir keys 
+$ mkdir keys
 $ ssh-keygen -q -f keys/dev -C aws_terraform_ssh_key -N ''
 ```  
 This will generate a public and private key named `dev` in the _keys_ directory.    
@@ -33,12 +33,12 @@ You may do the same and replace the -f parameter value by `keys/staging` to gene
 The _keys_ directory has been added to .gitignore to prevent accidental commiting to remote repository.  
 
 __Get ACM certificate__  
-Get existing Amazon Certificate for the CloudFront sitribution. 
+Get existing Amazon Certificate for the CloudFront distribution.
 ```
 $ aws acm list-certificates --region us-east-1
 ```
 Copy the certificarte ARN which will be used as a module parameter.   
-If you don't have an existing certificate, request for one using `aws acm` command. 
+If you don't have an existing certificate, request for one using `aws acm` command.
 __NB:__ The ACM certificate must be in _us-east-1_ region.
 
 __Initialization__  
@@ -46,13 +46,13 @@ After cloning the project for the first time, run `terraform init` command for e
 For example, the development network root module
 ```
 $ cd dev/network
-$ terraform init 
+$ terraform init
 ```
 Similarly, you must also run `terraform init` for the other root module when needed.   
 For example, to initialize the development server root module
-``` 
+```
 $ cd dev/server
-$ terraform init 
+$ terraform init
 ```  
 
 ### Deployment
@@ -69,10 +69,10 @@ __Deployment order__
 The deployment of the root modules should be done in the order of dependency as follows:  
 1. network  
 2. data
-3. server 
+3. server
 4. frontend  
 
-### Development and changes 
+### Development and changes
 __Backend changes__  
 If you change the backend configuration then you must run either `terraform init` with the  `-migrate-state` or `-reconfigure` flag.   
 If you wish to attempt automatic migration of the state run `migrate-state`
@@ -86,7 +86,7 @@ $ terraform init -reconfigure
 
 __Download remote state from S3__   
 Sometimes you may have the need to inspect the remote state of a root module.  
-To download the remote state of say the development network module: 
+To download the remote state of say the development network module:
 ```
 $ aws s3api get-object --bucket xyz.tochukwu-terraform-states --key plus1-conf/dev/network/terraform.tfstate.json results/dev-network-terraform-tfstate.json
 ```
@@ -111,8 +111,8 @@ __SSH into the EC2 instance__
 If you are using the key you generate yourself in the keys directory
 ```
 $ ssh -i keys/dev ec2-user@xx.xxx.xx.xxx
-``` 
-If you are using the downloaded key from AWS secrets manager 
+```
+If you are using the downloaded key from AWS secrets manager
 ```
 $ ssh -i ~/Plus1ConfDevKey.pem ec2-user@xx.xxx.xx.xxxx
 ```  
@@ -130,13 +130,13 @@ $ terraform destroy -var-file ../terraform.tfvars
 Similarly, to destroy all resource in production or staging, navigate to _staging_ or _prod_ directory respectively and run the `terraform destroy` command in the relevant root module.    
 
 __Cleanup order__   
-The deletion of the modules resources should be done in the reverse order to the deployment 
+The deletion of the modules resources should be done in the reverse order to the deployment
 1. frontend
-2. server 
+2. server
 3. data
 4. network
 
-__Release EIP__ 
+__Release EIP__
 Unattached Elastic IP attract charges, so you may want to release them as part of your clean up operation.  
 Release intially allocated elastic IP  
 ```
@@ -145,7 +145,7 @@ $ aws ec2 release-address --allocation-id eipalloc-04d13ec9ee2acba22
 
 __Delete private key__  
 Secrets stored in secrets manager are eligible to charges per secret.  
-Delete the private key from secrets manager. 
+Delete the private key from secrets manager.
 ```
 $ aws secretsmanager delete-secret --secret-id Plus1ConfDevKey
 ```  
