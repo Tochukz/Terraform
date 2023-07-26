@@ -11,13 +11,13 @@ terraform {
 locals {
   regions = {
     eu-west-1 = {
-      ami = "ami-08fea9e08576c443b"
+      ami = "ami-01dd271720c1ba44f"
     }
     eu-west-2 = {
-      ami = "ami-0055e70f580e9ae80"
+      ami = "ami-0eb260c4d5475b901"
     }
     eu-west-3 = {
-      ami = "ami-09352f5c929bf417c"
+      ami = "ami-05b5a865c3579bbc4"
     }
   }
 }
@@ -25,24 +25,27 @@ locals {
 
 resource "aws_key_pair" "keypair" {
   key_name = "SimpleEC2_KeyPair"
-  public_key = file("./keys/simple-ec2.pub")
+  public_key = file("./keys/simple-ubuntu.pub")
 }
 
 resource "aws_security_group" "web_security_group" {
-  vpc_id = aws_vpc.custom_vpc.id
-  name = "Plus1Conf-Web-SG"
+  name = "SimpleUbuntuWebSG"
   description = "Allows incoming HTTP/HTTPS, SSH access and all outgoing requests"
   ingress {
     from_port = 80
     to_port = 80
     protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    # Public browser access is needed for public server
+    #tfsec:ignore:aws-ec2-no-public-ingress-sgr
+    cidr_blocks = ["0.0.0.0/0"]  
     description = "Allow all incoming HTTP requests"
   }
   ingress {
     to_port = 443
     from_port = 443
     protocol = "tcp"
+    # Public browser access is needed for public server
+    #tfsec:ignore:aws-ec2-no-public-ingress-sgr 
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all incoming HTTPS requests"
   }
@@ -57,6 +60,8 @@ resource "aws_security_group" "web_security_group" {
     from_port = 0
     to_port = 0
     protocol = "-1"
+    # Instance need internet access to install needed dependencies
+    #tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all outgoing requests of all kinds"
   }
@@ -69,9 +74,15 @@ resource "aws_instance" "server_instance" {
   ami = local.regions[var.region].ami
   key_name = aws_key_pair.keypair.key_name
   instance_type = var.instance_type
-  vpc_security_group_ids = [aws_security_group.web_security_group.web_sg_id]
+  security_groups = [aws_security_group.web_security_group.name]
   associate_public_ip_address = true
-  user_data = file("user-data.sh")
+  user_data =file("${path.module}/user-data.sh")
+  root_block_device {
+    encrypted = true
+  }
+  metadata_options {
+    http_tokens = "required"
+  }
   tags = {
     Name = "SimpleEC2Ubuntu"
   }
