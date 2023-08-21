@@ -1,11 +1,13 @@
-# Update repository 
-sudo apt update -y
+# Update repository
+sudo apt-get update -y
 
 # Install utility
 sudo apt-get install unzip -y
 
-# Install Nginx 
-sudo apt install nginx -y
+sudo apt-get install composer -y
+
+# Install Nginx
+sudo apt-get install nginx -y
 # sudo ufw allow 'Nginx HTTP' -y
 # sudo service nginx start
 # Learn more: https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-22-04
@@ -18,6 +20,10 @@ sudo apt update
 apt-cache policy docker-ce
 sudo apt install docker-ce -y
 sudo systemctl status docker
-# To avoid using sudo any time you run the docker command 
+# To avoid using sudo any time you run the docker command
 sudo usermod -aG docker ubuntu
 #Learn more: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04
+
+# Alternatively use snap to install docker
+# sudo snap install docker
+# This method may produce a docker install with permission issues. 
