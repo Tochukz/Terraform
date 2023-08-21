@@ -274,6 +274,49 @@ __Resources__
 [Best practices](https://www.terraform-best-practices.com/)   
 
 ## Learn more
+### Terraform import  
+_Terraform import_ can be used to include pre-existing cloud resources in your configuration so that they can be managed using terraform.  
+_import_ is a Terraform CLI command which is used to read real-world infrastructure and update the state, so that future updates to the same set of infrastructure can be applied via IaC.
+If you lose your _terraform.tfstate_ file, you can use the import functionality to rebuild it.  
+
+__Importing an existing resource__  
+1. Let create an EC2 instance manually
+```bash
+$ aws ec2 run-instances --image-id ami-0244a5621d426859b --instance-type t2.micro
+```  
+
+2. Create a _main.tf_ file and setup provider configuratin
+```tf
+terraform {
+  required_version = ">= 1.5.5"
+  ...
+}
+
+```
+After setting up the provider configuration, run _terraform init_.
+
+3. Create a corresponding configuration for the resource in the _main.tf_
+```hcl
+resource "aws_instance" "ubuntu_server" {
+
+}
+```
+4. Run _terraform import_ command
+```bash
+# First find the instance-id of the EC2 instance
+$ aws ec2 describe-instances
+# Use the instance-id to run the terraform import
+$ terraform import aws_instance.ubuntu_server i-01e1ddab6549ef2c1
+```  
+After running _terraform import_ the resource will be  in your Terraform state and will henceforth be managed by Terraform.  
+
+5. Update your configuration to sync   
+By running _terraform import_ you state file will be created/updated to contain the imported resource.  
+Now you must update you config file to match the attribute represented in the state file.
+Start by running _terraform plan_ to see the difference. Then effect the necessary change.
+
+To learn more see [Importing Existing Infrastructure into Terraform](https://spacelift.io/blog/importing-exisiting-infrastructure-into-terraform). 
+
 ### Linting with TFLint
 TFLint is a Terraform linter that helps identify potential issues and best practices in Terraform code.  
 TFLint analyzes your HCL configuration files and provide warnings or errors for potential issues.  
