@@ -7,3 +7,4 @@ results/
 output
 terraform.tfstate
 terraform.tfstate.backup
+.infracost

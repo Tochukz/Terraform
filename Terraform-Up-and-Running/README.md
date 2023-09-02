@@ -315,7 +315,7 @@ By running _terraform import_ you state file will be created/updated to contain 
 Now you must update you config file to match the attribute represented in the state file.
 Start by running _terraform plan_ to see the difference. Then effect the necessary change.
 
-To learn more see [Importing Existing Infrastructure into Terraform](https://spacelift.io/blog/importing-exisiting-infrastructure-into-terraform). 
+To learn more see [Importing Existing Infrastructure into Terraform](https://spacelift.io/blog/importing-exisiting-infrastructure-into-terraform).
 
 ### Linting with TFLint
 TFLint is a Terraform linter that helps identify potential issues and best practices in Terraform code.  
@@ -463,3 +463,58 @@ Kics is cross platform and supports
 * Kubernetes
 
 [Kics Github](https://github.com/Checkmarx/kics)
+
+### Cost Analysis Tool
+#### InfraCost
+[Infracost docs](https://www.infracost.io/docs/)  
+
+__Description__  
+Infracost shows cloud cost estimates for Terraform.
+It lets engineers see a cost breakdown and understand costs before making changes, either in the terminal, VS Code or pull requests.  
+
+__Installation and setup__   
+Install the _infracost_ cli
+```
+$ brew install infracost
+```
+Obtain InfraCost API Key. To do this, you must
+1. Signup at [Infracost](https://www.infracost.io/)
+2. Login to Infracost dashboard
+3. Go to _Org Settings_ menu
+4. Click on _API Key_ to display and copy you API Key.  
+
+Setup you API key
+```
+$ infracost configure set api_key [your-api-key]
+```
+Alternatively, you can login from the terminal by running
+```
+$ infracost auth login
+```
+To view you API key
+```
+$ infracost configure get api_key  
+```
+__Cost estimates__  
+To show cost estimate breakdown, run the `breakdown` command.
+```
+$ cd my-configuration
+$ infracost breakdown --path .
+```
+
+__Cost estimate diff__  
+1. Generate an Infracost JSON file as the baseline:
+```
+$ infracost breakdown --path .  --format json --out-file infracost-base.json
+```
+2. Update you configuration, e.g change your EC2 instance type.
+3. Generate a diff by comparing the latest code change with the baseline:
+```
+$ infracost diff--path . --compare-to infracost-base.json
+```
+
+__Cost visualization__   
+There are a few ways to visualize cost estimate
+1. View cost on the dashboard:  Infracost Cloud > Visibility > Repos
+2. With source control or CI/CD integration you can view cost in pull requests. [CI/CD Integration](https://www.infracost.io/docs/integrations/cicd/)
+3.  Install the _infracost_ VScode extension to view cost in inside of VScode.  
