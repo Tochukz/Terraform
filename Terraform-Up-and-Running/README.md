@@ -481,7 +481,7 @@ Obtain InfraCost API Key. To do this, you must
 1. Signup at [Infracost](https://www.infracost.io/)
 2. Login to Infracost dashboard
 3. Go to _Org Settings_ menu
-4. Click on _API Key_ to display and copy you API Key.  
+4. Click on _API Key_ to display and copy your API Key.  
 
 Setup you API key
 ```
