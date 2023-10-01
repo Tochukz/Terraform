@@ -22,9 +22,10 @@ You can generate a keypair as follows:
 ```bash
 $ cd simple-windows
 $ mkdir keys
-$ ssh-keygen -q -f keys/simple-windows -C aws_terraform_ssh_key -N ''
+$ ssh-keygen -q -f keys/simple-windows5 -C aws_terraform_ssh_key -m PEM
 ```
 This generates a keypair name _simple-windows_ in the _keys_ directory.  
+Note that the key generated must be of the RSA format. This is specified by the _PEM_ value of the _-m_ flag. 
 
 __Linting (Optional)__   
 Run linting on the configuration files
@@ -66,8 +67,35 @@ Run _terraform apply_
 $ terraform apply --var-file params/tfvar.tf
 ```
 
-### After deployment
-__SSH into the instance__  
+### After deployment 
+#### Connect using Remote Desktop Protocol (RDP)
+1. __Install a Remote desktop client__  
+__For MacOS users__  
+If you are using MacOS , you can download the _Microsoft Remote Desktop_ app from the App store for free. 
+__For Windows users__  
+Windows usually have _Remote Desktop Connection_ RDC preinstalled. 
+
+2. __Download the _RDP_ shortcut (or create your own)__  
+The RDP shortcut enabled you to launch your installed RDP client without having to enter the details of the EC2 instance each time. You only enter your password. 
+To download the _RDP_ shortcut
+* Go to the EC2 console > instances
+* Select the instance by clicking on it's instance ID
+* Click on Connect  > RDP Client > Download remote desktop file
+
+3. __Generate password__  
+While on the  RDP Client Tab
+* Click Get Password 
+* Copy the content of your private key and paste in the _private key content_ text area. 
+* Click Decrypt password
+* Your generated password should be shown on the page. 
+
+4. __Connect to the EC2 instance__  
+* Lauch your RD client by clicking on the downloaded RD shortcut 
+* You may need to enter the server details like the Public IP and username if you launch the RDP client directly  
+* Enter your generated password 
+* Connect to the remote instance 
+
+#### Connect using SSH (Not yet tested)
 First copy the instance_id from the _arn_ output paramter.
 Then run _ec2 describe-instances_ to get your public IP address.
 ```bash

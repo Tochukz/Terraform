@@ -32,7 +32,7 @@ locals {
 
 resource "aws_key_pair" "keypair" {
   key_name = "SimpleWindows_KeyPair"
-  public_key = file("./keys/simple-windows.pub")
+  public_key = file("./keys/simple-windows5.pub")
 }
 
 resource "aws_security_group" "web_security_group" {
