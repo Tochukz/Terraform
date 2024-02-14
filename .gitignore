@@ -2,7 +2,6 @@
 .terraform
 results/
 .env
-.terraform.lock.hcl
 .DS_Store
 output
 terraform.tfstate
