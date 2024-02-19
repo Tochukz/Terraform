@@ -34,10 +34,10 @@ resource "aws_cloudwatch_event_rule" "ec2_statechange_rule" {
 }
 
 resource "aws_cloudwatch_event_target" "sns_target" {
-  name = "sns-target"
   target_id = "Simple_SNS_Target"
+  rule = aws_cloudwatch_event_rule.ec2_statechange_rule.name
   arn = aws_sns_topic.simple_topic.arn
-  depends_on = [ aws_sns_topic.simple_topic.arn ]
+  depends_on = [ aws_sns_topic.simple_topic ]
 }
 
 resource "aws_sns_topic" "simple_topic" {

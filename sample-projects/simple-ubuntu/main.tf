@@ -11,13 +11,13 @@ terraform {
 locals {
   regions = {
     eu-west-1 = {
-      ami = "ami-01dd271720c1ba44f"
+      ami = "ami-01dd271720c1ba44f" # Ubuntu Server 22.04 LTS (HVM) 64-bit (x86)
     }
     eu-west-2 = {
-      ami = "ami-0eb260c4d5475b901"
+      ami = "ami-0eb260c4d5475b901" # Ubuntu Server 22.04 LTS (HVM) 64-bit (x86)
     }
     eu-west-3 = {
-      ami = "ami-05b5a865c3579bbc4"
+      ami = "ami-05b5a865c3579bbc4" # Ubuntu Server 22.04 LTS (HVM) 64-bit (x86)
     }
   }
 }
@@ -37,7 +37,7 @@ resource "aws_security_group" "web_security_group" {
     protocol = "tcp"
     # Public browser access is needed for public server
     #tfsec:ignore:aws-ec2-no-public-ingress-sgr
-    cidr_blocks = ["0.0.0.0/0"]  
+    cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all incoming HTTP requests"
   }
   ingress {
@@ -45,13 +45,13 @@ resource "aws_security_group" "web_security_group" {
     from_port = 443
     protocol = "tcp"
     # Public browser access is needed for public server
-    #tfsec:ignore:aws-ec2-no-public-ingress-sgr 
+    #tfsec:ignore:aws-ec2-no-public-ingress-sgr
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all incoming HTTPS requests"
   }
   ingress {
     from_port = 22
-    to_port = 22 
+    to_port = 22
     protocol = "tcp"
     cidr_blocks = [var.ssh_cidr_block]
     description = "Allow incoming SSH requests from IPs in cidr ${var.ssh_cidr_block}"
@@ -87,4 +87,3 @@ resource "aws_instance" "server_instance" {
     Name = "SimpleEC2Ubuntu"
   }
 }
-
