@@ -8,3 +8,4 @@ output
 terraform.tfstate
 terraform.tfstate.backup
 .infracost
+node_modules
