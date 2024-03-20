@@ -19,6 +19,12 @@ $ docker build -t express-app/0.0.1  .
 $ docker run -p 8095:8083 express-app/0.0.1
 ```
 
+Or you can run the container in detadched mode
+
+```bash
+$ docker run -it -p 8095:8083 express-app/0.0.1
+```
+
 3. Test the application on your browser by going to `http://localhost:8095` with your browser.
 
 **Using Docker-compose with Dockerfile**
