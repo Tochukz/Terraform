@@ -55,12 +55,21 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
   role       = aws_iam_role.simple_lambda_role.name
 }
 
+/*
+resource "aws_lambda_layer_version" "simple_layer" {
+  layer_name          = "SimpleLambdaLayer"
+  s3_bucket           = "local-dev-workspace"
+  s3_key              = "v0.0.5/php-vendor.zip"
+  compatible_runtimes = ["provided.al2"]
+}
+*/
+
 resource "aws_lambda_function" "simple_lambda" {
   function_name = "Simple_PHP"
   timeout       = 120
   runtime       = "provided.al2"
   s3_bucket     = "local-dev-workspace"
-  s3_key        = "v0.0.1/sample-php.zip"
+  s3_key        = "v0.0.5/sample-php.zip"
   handler       = "index.php"
   role          = aws_iam_role.simple_lambda_role.arn
   memory_size   = 1024
@@ -70,7 +79,8 @@ resource "aws_lambda_function" "simple_lambda" {
     }
   }
   layers = [
-    "arn:aws:lambda:eu-west-2:534081306603:layer:php-83:21" # See https://runtimes.bref.sh/
+    "arn:aws:lambda:eu-west-2:534081306603:layer:php-83:21", # See https://runtimes.bref.sh/
+    # "${aws_lambda_layer_version.simple_layer.layer_arn}:${var.layer_version}"
   ]
   tracing_config {
     mode = "Active"
