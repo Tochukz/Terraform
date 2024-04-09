@@ -1,0 +1,12 @@
+{
+    "name": "tochukz/sample-php",
+    "require": {
+        "bref/bref": "^2.1"
+    },
+    "authors": [
+        {
+            "name": "Tochukwu Nwachukwu",
+            "email": "truetochukz@gmail.com"
+        }
+    ]
+}
