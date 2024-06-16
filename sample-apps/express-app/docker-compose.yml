@@ -3,6 +3,6 @@ services:
   app:
     build: .
     ports:
-      - "8095:8083"
+      - "8083:8083"
     volumes:
       - .:/usr/src/app

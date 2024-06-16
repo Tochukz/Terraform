@@ -11,10 +11,10 @@ RUN npm install
 # Copy the rest of the application code to the container
 COPY . .
 
-EXPOSE 8083
+EXPOSE 80
 
 # For production environment
-# CMD ["node", "./bin/www"]
+CMD ["node", "./bin/www"]
 
 # For development environment
-CMD ["nodemon", "./bin/www"]
+# CMD ["nodemon", "./bin/www"]

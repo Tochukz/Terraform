@@ -27,7 +27,7 @@ $ docker run -it -p 8095:8083 express-app/0.0.1
 
 3. Test the application on your browser by going to `http://localhost:8095` with your browser.
 
-**Using Docker-compose with Dockerfile**
+**Using Docker-compose with Dockerfile**  
 To build the docker image and run the docker container using `docker-compose.yml` file.
 
 ```bash
