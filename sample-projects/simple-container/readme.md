@@ -49,13 +49,25 @@ $ docker push <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/simple-express-re
 ```
 
 __Update ECS Container__  
-After you may have made changes to your application code, you need to push an updated image and then update the ECS service. 
+After you may have made changes to your application code, you need to push an updated image and then update the ECS service.
 ```bash
 # Build the image again and push it
 $ docker build -t 665778208875.dkr.ecr.eu-west-2.amazonaws.com/simple-express-repo .
 $ docker push 665778208875.dkr.ecr.eu-west-2.amazonaws.com/simple-express-repo
 # Update the ECS Service using the cluster name and service name
-$ aws ecs update-service --cluster simple-cluster --service simple-service --force-new-deployment
-# Check Service status
-$ aws ecs describe-services --cluster <cluster_name> --services <service_name>
+# Not working at the moment
+# $ aws ecs update-service --cluster simple-cluster --service simple-service --force-new-deployment
+# # Check Service status
+# $ aws ecs describe-services --cluster <cluster_name> --services <service_name>
+```
+
+__Clean up__  
+Destory all the resource
+```bash
+$ terraform destroy
+```
+Delete the ECR repository
+```bash
+# Make sure all the repository images are already deleted
+$ aws ecr delete-repository --repository-name simple-express-repo
 ```
