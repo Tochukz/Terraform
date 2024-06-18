@@ -10,6 +10,3 @@ output "service_id" {
   value = aws_ecs_service.simple_service.id
 }
 
-output "task_arn" {
-  value = aws_ecs_task_definition.simple_task.arn
-}

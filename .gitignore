@@ -2,6 +2,7 @@
 .terraform
 results/
 .env
+docker.env
 .DS_Store
 output
 terraform.tfstate

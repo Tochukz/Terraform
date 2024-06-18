@@ -28,38 +28,57 @@ Create an AWS ECR repository
 ```bash
 $ aws ecr create-repository --repository-name simple-express-repo
 ```
-Copy the `repository.repositoryUri` value from the output of the newly created repository. This value will be used for the `ecr_repository_url` variable in the configuration.  
+Copy the `repository.repositoryUri` value from the output of the newly created repository. This value will be used for the `ecr_repository_url` variable in the configuration and also to tag the local docker image.
 
 __Push Image to ECR Repo__  
 1. Authenticate your Docker client to access AWS ECR
 ```bash
 $ aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com
 ```
-2. Tag the image for ECR
+2. Tag the local image with the remote repository url copied from the repository creation.
 ```bash
-$ docker tag simple-express-app <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/simple-express-repo
+$ docker tag simple-express-app <respository-uri>
 ```
 Generally it should following the structure
 ```bash
-$ docker tag <repository_name>:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/<repository_name>:latest
+$ docker tag <repository_name>:latest <respository-uri>:latest
 ```
 3. Push the image to ECR
 ```bash
 $ docker push <aws_account_id>.dkr.ecr.eu-west-2.amazonaws.com/simple-express-repo
 ```
 
+__Deploy the configuration__  
+```bash
+$ terraform apply
+```
+
+__Test the application__  
+A public IP address is automatically assigned to the ECS service. You can use this public IP to access the application.  
+Go to AWS ECS Console > Cluster > Select the cluster > Services > Select the service > Tasks > Select the task > Configuration tab > Configuration section, you will see the public IP address for the service.  
+Copy the public IP address to your browser.  
+
+You can add an `A` record in your DNS control to point to the IP address.
+
+Host	 | TTL	| Type	|Value
+-------|------|-------|------
+app    | 3600 |  A    | 35.178.249.54
+
+After a few minutes, you should be able to access the application at http://app.yourdomain.com
+
 __Update ECS Container__  
 After you may have made changes to your application code, you need to push an updated image and then update the ECS service.
 ```bash
 # Build the image again and push it
-$ docker build -t 665778208875.dkr.ecr.eu-west-2.amazonaws.com/simple-express-repo .
-$ docker push 665778208875.dkr.ecr.eu-west-2.amazonaws.com/simple-express-repo
+$ docker build -t simple-express-app
+$ docker tag simple-express-app <respository-uri>
+$ docker push <respository-uri>
 # Update the ECS Service using the cluster name and service name
-# Not working at the moment
-# $ aws ecs update-service --cluster simple-cluster --service simple-service --force-new-deployment
-# # Check Service status
-# $ aws ecs describe-services --cluster <cluster_name> --services <service_name>
+$ aws ecs update-service --cluster simple-cluster --service simple-service --force-new-deployment
+# Check Service status
+$ aws ecs describe-services --cluster <cluster_name> --service <service_name>
 ```
+Note that after the ECS service is updated, the public IP address will change. You have to go back to the ECS console to get the new public IP address to test the updated application.  
 
 __Clean up__  
 Destory all the resource
