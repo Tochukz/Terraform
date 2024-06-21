@@ -64,5 +64,5 @@ resource "aws_ecs_service" "app_service" {
     assign_public_ip = false
     security_groups  = [aws_security_group.advance_service_sg.id]
   }
-  depends_on = [aws_lb_listener.advance_lb_listener]
+  depends_on = [aws_lb_listener.https_listener]
 }

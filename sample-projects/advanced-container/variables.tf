@@ -16,3 +16,12 @@ variable "env_variables" {
     NODE_ENV = "advanced-production"
   }
 }
+variable "certificate_arn" {
+  type        = string
+  description = "ARN of SSL certificate"
+  default     = "arn:aws:acm:eu-west-2:665778208875:certificate/f1d8c127-b68a-4fac-8147-f987ff4f8ab4"
+  validation {
+    condition     = can(regex(".*acm:eu-west-2.*", var.certificate_arn))
+    error_message = "The ACM certificate must be from the eu-west-2 region."
+  }
+}
