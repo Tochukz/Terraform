@@ -90,3 +90,7 @@ Delete the ECR repository
 # Make sure all the repository images are already deleted
 $ aws ecr delete-repository --repository-name simple-express-repo
 ```
+
+__Resources__   
+[How do I deploy updated Docker images to Amazon ECS tasks](https://stackoverflow.com/questions/34840137/how-do-i-deploy-updated-docker-images-to-amazon-ecs-tasks)  
+[ECS Fargate Docker container securely hosted behind API Gateway using Terraform](https://medium.com/@chetlo/ecs-fargate-docker-container-securely-hosted-behind-api-gateway-using-terraform-10d4963b65a3)  

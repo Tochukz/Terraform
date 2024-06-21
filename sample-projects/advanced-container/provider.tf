@@ -11,3 +11,9 @@ terraform {
 provider "aws" {
   region = "eu-west-2"
 }
+
+data "aws_region" "current" {}
+
+locals {
+  region = data.aws_region.current.name
+}
