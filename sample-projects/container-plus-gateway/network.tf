@@ -184,3 +184,38 @@ resource "aws_security_group" "container_sg" {
     security_groups = [aws_security_group.container_sg.id]
   }
 }
+
+resource "aws_service_discovery_private_dns_namespace" "private_namespace" {
+  name = var.private_dns_namespace_name
+  vpc  = aws_vpc.custom_vpc.id
+}
+
+resource "aws_service_discovery_service" "foodstore_service_discovery" {
+  name = "foods.foodstore"
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.private_namespace.id
+    dns_records {
+      type = "SRV"
+      ttl  = 60
+    }
+
+  }
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
+
+resource "aws_service_discovery_service" "petstore_service_discovery" {
+  name = "pets.petstore"
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.private_namespace.id
+    dns_records {
+      type = "SRV"
+      ttl  = 60
+    }
+
+  }
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
