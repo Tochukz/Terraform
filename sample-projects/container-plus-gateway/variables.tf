@@ -13,7 +13,7 @@ variable "min_containers_foodstore_foods" {
   description = "Minimum number of ECS tasks per ECS service"
   default     = 3
 }
-variable "max_containers_foodstore_food" {
+variable "max_containers_foodstore_foods" {
   type        = number
   description = "Maximum number of ECS tasks per ECS service"
   default     = 30
