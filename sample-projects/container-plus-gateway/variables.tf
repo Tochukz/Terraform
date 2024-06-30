@@ -1,4 +1,4 @@
-variable "envrionment_name" {
+variable "environment_name" {
   type        = string
   description = "A friendly environment name that will be used for namespacing all cluster resources. Example: staging, qa, or production"
   default     = "escapei-demo"

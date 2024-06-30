@@ -1,5 +1,5 @@
 
-data "aws_availability_zone" "zones" {
+data "aws_availability_zones" "zones" {
 }
 
 data "aws_region" "current" {
@@ -27,6 +27,6 @@ locals {
   private_three = {
     cidr = "10.0.102.0/24"
   }
-  zones  = aws_availability_zone.zones.names
-  region = aws_region.current.name
+  zones  = data.aws_availability_zones.zones.names
+  region = data.aws_region.current.name
 }

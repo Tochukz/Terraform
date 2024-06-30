@@ -5,7 +5,7 @@ resource "aws_vpc" "custom_vpc" {
 }
 
 resource "aws_subnet" "public_subnet_one" {
-  vpc_id                  = aws.custom_vpc.id
+  vpc_id                  = aws_vpc.custom_vpc.id
   cidr_block              = local.public_one.cidr
   availability_zone       = local.zones[0]
   map_public_ip_on_launch = true
@@ -168,20 +168,21 @@ resource "aws_vpc_endpoint" "dynamodb_endpoint" {
 }
 
 resource "aws_security_group" "container_sg" {
+  name        = "ContainerSG"
   vpc_id      = aws_vpc.custom_vpc.id
   description = "Access to the Fargate containers"
 
   /* 
   * A security group self-ingress rule allows instances associated with the same 
-  * security group to communicate with each other. Thi can be useful for allowing 
+  * security group to communicate with each other. This can be useful for allowing 
   * traffic within a group of instances without exposing then to the outside world.
   */
   ingress {
-    description     = "Self ingress"
-    from_port       = 8080
-    to_port         = 8080
-    protocol        = "tcp"
-    security_groups = [aws_security_group.container_sg.id]
+    description = "Self ingress"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    self        = true
   }
 }
 
