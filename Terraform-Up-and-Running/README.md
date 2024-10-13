@@ -37,6 +37,13 @@ You may also install the _autocomplete package_:
 ```
 $ terraform -install-autocomplete
 ```
+
+__Updating Terraform__  
+To update terraform, you can simple install the latest version
+```
+$ brew install hashicorp/tap/terraform
+```
+
 __Deploy a Single server__  
 Terraform code is written in the _HashiCorp Configuration Language_ (HCL) in files with the extension `.tf`.     
 

@@ -10,3 +10,5 @@ terraform.tfstate.backup
 .infracost
 node_modules
 env.sh
+*-lambda-func.json
+*.zip
