@@ -35,15 +35,16 @@ resource "aws_lambda_permission" "users_mgt_permission" {
 }
 
 
-resource "aws_api_gateway_resource" "catalog_resource" {
-  rest_api_id = aws_api_gateway_rest_api.simple_gateway.id
-  parent_id   = aws_api_gateway_rest_api.simple_gateway.root_resource_id
-  path_part   = "product"
-}
+# resource "aws_api_gateway_resource" "catalog_resource" {
+#   rest_api_id = aws_api_gateway_rest_api.simple_gateway.id
+#   parent_id   = aws_api_gateway_rest_api.simple_gateway.root_resource_id
+#   path_part   = "product"
+# }
 
 resource "aws_api_gateway_resource" "catalog_proxy_resource" {
   rest_api_id = aws_api_gateway_rest_api.simple_gateway.id
-  parent_id   = aws_api_gateway_resource.catalog_resource.id
+  # parent_id   = aws_api_gateway_resource.catalog_resource.id
+  parent_id   = aws_api_gateway_rest_api.simple_gateway.root_resource_id
   path_part   = "{proxy+}"
 }
 
@@ -52,6 +53,9 @@ resource "aws_api_gateway_method" "catalog_proxy_method" {
   resource_id   = aws_api_gateway_resource.catalog_proxy_resource.id
   http_method   = "ANY"
   authorization = "NONE"
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
 }
 
 resource "aws_api_gateway_integration" "catalog_proxy_integration" {
@@ -61,6 +65,9 @@ resource "aws_api_gateway_integration" "catalog_proxy_integration" {
   integration_http_method = "ANY"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.catalog_mgt.invoke_arn
+   request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+  }
 }
 
 resource "aws_lambda_permission" "catalog_mgt_permission" {
