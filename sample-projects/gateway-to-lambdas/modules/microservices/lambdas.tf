@@ -24,34 +24,29 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
 resource "aws_lambda_layer_version" "shared_layer" {
   layer_name          = "SharedLayer"
   compatible_runtimes = ["nodejs20.x"]
-  s3_bucket           = var.arctifact_bucket
+  s3_bucket           = var.artifact_bucket
   s3_key              = "${var.artifact_version}/shared-module.zip"
 }
 
-resource "aws_lambda_function" "user_mgt" {
+module "user_mgt_lambda" {
+  source = "../../submodules/lambda"
   function_name = "UserManagement"
-  handler       = "lambda.handler"
-  runtime       = "nodejs20.x"
-  memory_size   = 512
-  timeout       = 15
-  role          = aws_iam_role.lambda_execution_role.arn
-  s3_bucket     = var.arctifact_bucket
-  s3_key        = "${var.artifact_version}/user-management.zip"
-  layers = [
-    aws_lambda_layer_version.shared_layer.arn
+  artifact_bucket = var.artifact_bucket
+  artifact_key = "${var.artifact_version}/user-management.zip"
+  role_arn = aws_iam_role.lambda_execution_role.arn
+  layer_arns = [
+   "${aws_lambda_layer_version.shared_layer.layer_arn}:${var.layer_version}"
   ]
 }
 
-resource "aws_lambda_function" "catalog_mgt" {
+
+module "catalog_mgt_lambda" {
+  source = "../../submodules/lambda"
   function_name = "CatalogManagement"
-  handler       = "lambda.handler"
-  runtime       = "nodejs20.x"
-  memory_size   = 512
-  timeout       = 15
-  role          = aws_iam_role.lambda_execution_role.arn
-  s3_bucket     = var.arctifact_bucket
-  s3_key        = "${var.artifact_version}/catalog-management.zip"
-  layers = [
-    aws_lambda_layer_version.shared_layer.arn
+  artifact_bucket = var.artifact_bucket
+  artifact_key =  "${var.artifact_version}/catalog-management.zip"
+  role_arn = aws_iam_role.lambda_execution_role.arn
+  layer_arns = [
+    "${aws_lambda_layer_version.shared_layer.layer_arn}:${var.layer_version}"
   ]
 }
