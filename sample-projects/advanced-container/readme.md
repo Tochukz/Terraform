@@ -5,7 +5,7 @@ This configuration provisions an ECS container for a NodeJS application. All the
 ### Setup
 __ECR Repository__    
 Before the configuration can be deployed, an ECR repository must have been configured. This ECR repository URL must be used for the `ecr_repository_url` variable.
-You can create your reposotory and push an image to it by going through the following steps.
+You can create your repository and push an image to it by going through the following steps.
 
 1. Create a repository
 ```bash
