@@ -112,7 +112,7 @@ resource "aws_iam_policy" "serverless_deploy" {
       {
         Sid      = "IamForServerlessCli"
         Effect   = "Allow"
-        Action   = ["iam:GetRole"]
+        Action   = ["iam:GetRole", "iam:PassRole"]
         Resource = "*"
       },
       {
@@ -127,7 +127,19 @@ resource "aws_iam_policy" "serverless_deploy" {
         Action = [
           "lambda:Get*",
           "lambda:List",
+          "lambda:CreateFunction",
+          "lambda:DeleteFunction",
           "lambda:UpdateFunctionConfiguration",
+          "lambda:UpdateFunctionCode",
+          "lambda:CreateAlias",
+          "lambda:DeleteAlias",
+          "lambda:UpdateAlias",
+          "lambda:AddPermission",
+          "lambda:RemovePermission",
+          "lambda:InvokeFunction",
+          "lambda:PublishVersion",
+          "lambda:ListTags",
+          "lambda:ListVersionsByFunction",
         ]
         Resource = "*"
       },
