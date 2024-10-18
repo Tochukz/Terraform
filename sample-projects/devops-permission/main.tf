@@ -73,14 +73,13 @@ resource "aws_iam_policy" "devops_deploy" {
         Resource = "*" # ARN of the ECS services
       },
       {
-        Sid    = "EcrGetAuthToken",
+        Sid    = "EcrRepositoryDeploy",
         Effect = "Allow"
         Action = [
           "ecr:GetAuthorizationToken",
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
-
           "ecr:BatchCheckLayerAvailability",
           "ecr:DescribeImages",
           "ecr:DescribeRepositories",
@@ -90,10 +89,115 @@ resource "aws_iam_policy" "devops_deploy" {
         ],
         Resource = "*" # ARN of the ECR repository
       },
+      {
+        Sid    = "CloudformationForServelessFrameworkCli"
+        Effect = "Allow"
+        Action = [
+          "cloudformation:DescribeStackResource"
+        ]
+        Resource = "arn:aws:cloudformation:${local.region}:${local.account_id}:*/*/*"
+      },
     ]
   })
   tags = {
-    Description = "IAM policy for backend deployment pipeline"
+    Description = "IAM policy for CI/CD deployment pipeline"
   }
+}
+
+resource "aws_iam_policy" "serverless_deploy" {
+  name = "Serverless_Deploy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "IamForServerlessCli"
+        Effect   = "Allow"
+        Action   = ["iam:GetRole"]
+        Resource = "*"
+      },
+      {
+        Sid      = "SsmForServerlessCli"
+        Effect   = "Allow"
+        Action   = ["ssm:GetParameter"]
+        Resource = "*"
+      },
+      {
+        Sid    = "LambdaForServerlessCli"
+        Effect = "Allow"
+        Action = [
+          "lambda:Get*",
+          "lambda:List",
+          "lambda:UpdateFunctionConfiguration",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "LambdaLayerForServerlessCli"
+        Effect = "Allow"
+        Action = [
+          "lambda:PublishLayerVersion"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "S3ListForServerlessCli"
+        Effect = "Allow"
+        Action = [
+          "s3:List*",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "S3CreateForServerlessCli"
+        Effect = "Allow"
+        Action = [
+          "s3:CreateBucket",
+          "s3:GetBucketLocation",
+          "s3:DeleteBucket",
+          "s3:ListBucket",
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketPolicy",
+          "s3:DeleteBucketPolicy",
+          "s3:PutBucketAcl",
+          "s3:GetEncryptionConfiguration",
+          "s3:PutEncryptionConfiguration"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "CloudformationValidateForServerlessCli"
+        Effect = "Allow"
+        Action = [
+          "cloudformation:ValidateTemplate"
+        ],
+        Resource = "*"
+      },
+      {
+        Sid    = "CloudformationCreateForServerlessCli"
+        Effect = "Allow"
+        Action = [
+          "cloudformation:CreateChangeSet",
+          "cloudformation:CreateStack",
+          "cloudformation:DeleteChangeSet",
+          "cloudformation:DeleteStack",
+          "cloudformation:DescribeChangeSet",
+          "cloudformation:DescribeStackEvents",
+          "cloudformation:DescribeStackResource",
+          "cloudformation:DescribeStackResources",
+          "cloudformation:DescribeStacks",
+          "cloudformation:ExecuteChangeSet",
+          "cloudformation:ListStackResources",
+          "cloudformation:SetStackPolicy",
+          "cloudformation:UpdateStack",
+          "cloudformation:UpdateTerminationProtection",
+          "cloudformation:GetTemplate"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
