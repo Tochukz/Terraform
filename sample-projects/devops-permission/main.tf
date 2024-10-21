@@ -73,10 +73,15 @@ resource "aws_iam_policy" "devops_deploy" {
         Resource = "*" # ARN of the ECS services
       },
       {
-        Sid    = "EcrRepositoryDeploy",
+        Sid      = "EcrAuthorization",
+        Effect   = "Allow",
+        Action   = ["ecr:GetAuthorizationToken"],
+        Resource = "*"
+      },
+      {
+        Sid    = "EcrPublish",
         Effect = "Allow"
         Action = [
-          "ecr:GetAuthorizationToken",
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
@@ -108,89 +113,135 @@ resource "aws_iam_policy" "serverless_deploy" {
   name = "Serverless_Deploy"
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement : [
       {
-        Sid      = "IamForServerlessCli"
-        Effect   = "Allow"
-        Action   = ["iam:GetRole", "iam:PassRole"]
-        Resource = "*"
+        Sid      = "StsForServerlessCli",
+        Effect   = "Allow",
+        Action   = ["sts:GetCallerIdentity"]
+        Resource = "*",
       },
       {
-        Sid      = "SsmForServerlessCli"
-        Effect   = "Allow"
-        Action   = ["ssm:GetParameter"]
-        Resource = "*"
-      },
-      {
-        Sid    = "LambdaForServerlessCli"
-        Effect = "Allow"
+        Sid    = "IamForServerlessCli",
+        Effect = "Allow",
         Action = [
-          "lambda:Get*",
-          "lambda:List",
+          "iam:GetRole",
+          "iam:PassRole",
+          "iam:CreateRole",
+          "iam:AttachRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:DetachRolePolicy",
+          "iam:DeleteRole",
+          "iam:TagRole",
+        ],
+        Resource = "*",
+      },
+      {
+        Sid      = "SsmAllForServerlessCli",
+        Effect   = "Allow",
+        Action   = ["ssm:PutParameter", "ssm:GetParameter"],
+        Resource = "*",
+      },
+      {
+        Sid    = "ApiGatwayForServerlessCli",
+        Effect = "Allow",
+        Action = [
+          "apigateway:DeleteRestApi",
+          "apigateway:DeleteResource",
+          "apigateway:DeleteRequestValidator",
+          "apigateway:DeleteMethod",
+          "apigateway:DeleteDeployment",
+          "apigateway:CreateDeployment",
+          "apigateway:PutMethod",
+          "apigateway:PutIntegration",
+          "apigateway:PutMethodResponse",
+          "apigateway:PutIntegrationResponse",
+          "apigateway:CreateResource",
+          "apigateway:CreateRequestValidator",
+          "apigateway:CreateRestApi",
+          "apigateway:GetDeployment",
+          "apigateway:GetStage",
+          "apigateway:GetMethod",
+          "apigateway:GetRequestValidator",
+          "apigateway:GetRestApi",
+          "apigateway:PUT",
+          "apigateway:POST",
+          "apigateway:GET",
+          "apigateway:DELETE",
+        ],
+        Resource = "*",
+      },
+      {
+        Sid    = "LambdaForServerlessCli",
+        Effect = "Allow",
+        Action = [
+          "lambda:GetFunction",
+          "lambda:ListLayers",
+          "lambda:ListLayerVersions",
+          "lambda:ListFunctions",
+          "lambda:GetLayerVersion",
           "lambda:CreateFunction",
-          "lambda:DeleteFunction",
-          "lambda:UpdateFunctionConfiguration",
-          "lambda:UpdateFunctionCode",
-          "lambda:CreateAlias",
-          "lambda:DeleteAlias",
-          "lambda:UpdateAlias",
-          "lambda:AddPermission",
-          "lambda:RemovePermission",
           "lambda:InvokeFunction",
+          "lambda:PublishLayerVersion",
           "lambda:PublishVersion",
+          "lambda:PutFunctionEventInvokeConfig",
+          "lambda:UpdateFunctionCode",
+          "lambda:UpdateFunctionConfiguration",
+          "lambda:AddLayerVersionPermission",
+          "lambda:AddPermission",
+          "lambda:DeleteFunction",
           "lambda:ListTags",
+          "lambda:TagResource",
+          "lambda:UntagResource",
           "lambda:ListVersionsByFunction",
-        ]
-        Resource = "*"
+          "lambda:RemovePermission",
+          "lambda:DeleteLayerVersion",
+        ],
+        Resource = "*",
       },
       {
-        Sid    = "LambdaLayerForServerlessCli"
-        Effect = "Allow"
-        Action = [
-          "lambda:PublishLayerVersion"
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "S3ListForServerlessCli"
-        Effect = "Allow"
-        Action = [
-          "s3:List*",
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "S3CreateForServerlessCli"
-        Effect = "Allow"
+        Sid    = "S3AllForServerlessCli",
+        Effect = "Allow",
         Action = [
           "s3:CreateBucket",
+          "s3:PutBucketVersioning",
           "s3:GetBucketLocation",
-          "s3:DeleteBucket",
           "s3:ListBucket",
           "s3:PutObject",
+          "s3:DeleteBucket",
           "s3:GetObject",
           "s3:DeleteObject",
+          "s3:DeleteObjectVersion",
           "s3:GetBucketPolicy",
           "s3:PutBucketPolicy",
           "s3:DeleteBucketPolicy",
           "s3:PutBucketAcl",
           "s3:GetEncryptionConfiguration",
-          "s3:PutEncryptionConfiguration"
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "CloudformationValidateForServerlessCli"
-        Effect = "Allow"
-        Action = [
-          "cloudformation:ValidateTemplate"
+          "s3:PutEncryptionConfiguration",
+          "s3:ListBucketVersions",
         ],
-        Resource = "*"
+        Resource = "*",
       },
       {
-        Sid    = "CloudformationCreateForServerlessCli"
-        Effect = "Allow"
+        Sid    = "LogsForServerlessCli",
+        Effect = "Allow",
         Action = [
+          "logs:DeleteLogGroup",
+          "logs:CreateLogGroup",
+          "logs:DescribeLogGroups",
+          "logs:TagResource",
+        ],
+        Resource = "*",
+      },
+      {
+        Sid    = "CloudformationForServerlessCli",
+        Effect = "Allow",
+        Action = [
+          "cloudformation:UpdateStack",
+          "cloudformation:Validate*",
+          "cloudformation:Start*",
+          "cloudformation:Continue*",
+          "cloudformation:RollbackStack",
           "cloudformation:CreateChangeSet",
           "cloudformation:CreateStack",
           "cloudformation:DeleteChangeSet",
@@ -198,18 +249,16 @@ resource "aws_iam_policy" "serverless_deploy" {
           "cloudformation:DescribeChangeSet",
           "cloudformation:DescribeStackEvents",
           "cloudformation:DescribeStackResource",
-          "cloudformation:DescribeStackResources",
           "cloudformation:DescribeStacks",
           "cloudformation:ExecuteChangeSet",
           "cloudformation:ListStackResources",
           "cloudformation:SetStackPolicy",
-          "cloudformation:UpdateStack",
-          "cloudformation:UpdateTerminationProtection",
-          "cloudformation:GetTemplate"
-        ]
-        Resource = "*"
-      }
-    ]
+          "cloudformation:GetTemplate",
+          "cloudformation:ValidateTemplate",
+        ],
+        Resource = "*",
+      },
+    ],
   })
 }
 
