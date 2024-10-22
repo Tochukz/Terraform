@@ -13,10 +13,10 @@ provider "aws" {
 }
 
 module "microservices" {
-  source = "../../modules/microservices"
-  artifact_bucket = "chucks-workspace-storage"
+  source           = "../../modules/microservices"
+  artifact_bucket  = "chucks-workspace-storage"
   artifact_version = "v0.0.1"
-  stage_name = "development"
-  env = "dev"
-  layer_version = 2
+  stage_name       = "development"
+  env              = "dev"
+  layer_version    = 1
 }
