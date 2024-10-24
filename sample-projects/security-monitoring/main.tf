@@ -151,7 +151,8 @@ resource "aws_cloudwatch_metric_alarm" "unauthorized_api_alarm" {
 resource "aws_cloudwatch_log_metric_filter" "root_login" {
   name           = "RootLoginAttempt"
   log_group_name = aws_cloudwatch_log_group.cloudtrail_log_group.name
-  pattern        = "{ ($.userIdentity.type = \"Root\") && ($.userIdentity.invokedBy NOT EXISTS) && ($.eventType = \"AwsConsoleLogin\") }"
+  # pattern        = "{ ($.userIdentity.type = \"Root\") && ($.userIdentity.invokedBy NOT EXISTS) && ($.eventType = \"AwsConsoleLogin\") }"
+  pattern = "{ $.userIdentity.type = Root }"
   metric_transformation {
     name      = "RootLoginAttempts"
     namespace = "CloudTrailMetrics"
