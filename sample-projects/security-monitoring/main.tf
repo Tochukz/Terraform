@@ -61,7 +61,7 @@ resource "aws_iam_role_policy_attachment" "cloud_policy_attach" {
 }
 
 resource "aws_cloudwatch_log_group" "cloudtrail_log_group" {
-  name              = "SimpleCloudTrailLogs"
+  name              = "/aws/cloudtrail/SimpleCloudTrailLogs"
   retention_in_days = 90
 }
 
