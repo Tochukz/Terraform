@@ -12,11 +12,11 @@ const categories = [
   },
 ];
 
-router.get("/categories", function (req, res, next) {
+router.get("/", function (req, res, next) {
   return res.json(categories);
 });
 
-router.post("/categories/create", (req, res, next) => {
+router.post("/create", (req, res, next) => {
   const categoryName = req.body.categoryName;
   const categoryId = categories.length + 1;
   const newCategory = { categoryId, categoryName };
