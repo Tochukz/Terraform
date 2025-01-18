@@ -96,7 +96,11 @@ resource "aws_api_gateway_stage" "simple_stage" {
     })
   }
   xray_tracing_enabled = true
-  depends_on           = [aws_api_gateway_account.simple_account]
+  variables = {
+    log_level  = "INFO" # INFO, ERROR or DEBUG
+    data_trace = true
+  }
+  depends_on = [aws_api_gateway_account.simple_account]
 }
 
 
